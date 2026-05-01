@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ai-task-worker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ai-task-worker
+  template:
+    metadata:
+      labels:
+        app: ai-task-worker
+    spec:
+      containers:
+        - name: worker
+          image: utkurs/ai-task-api:latest
+          imagePullPolicy: Always
+          command: ["node", "src/queue/worker.js"]
+          env:
+            - name: MONGO_URI
+              value: "mongodb://mongo:27017/ai_task_platform"
+            - name: REDIS_HOST
+              value: "redis"
+            - name: REDIS_PORT
+              value: "6379"
+            - name: JWT_SECRET
+              value: "dev_secret_key_123"
+            - name: JWT_EXPIRES_IN
+              value: "7d"
